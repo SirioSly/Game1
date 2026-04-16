@@ -53,6 +53,7 @@ interface BallState {
 // ─── Scene ────────────────────────────────────────────────────────────────────
 
 export class PongScene extends BaseMiniGameScene {
+  constructor() { super({ key: SCENE_KEYS.PONG }) }
 
   // game state
   private playerScore  = 0

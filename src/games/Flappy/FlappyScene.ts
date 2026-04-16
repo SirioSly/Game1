@@ -49,6 +49,8 @@ interface Pipe {
 // ─── Scene ───────────────────────────────────────────────────────────────────
 
 export class FlappyScene extends BaseMiniGameScene {
+  constructor() { super({ key: SCENE_KEYS.FLAPPY }) }
+
   // Bird physics
   private birdY  = 0
   private birdVY = 0

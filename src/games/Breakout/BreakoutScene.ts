@@ -61,6 +61,8 @@ function brickConfig(row: number): { points: number; colorNum: number } {
 // ─── Scene ───────────────────────────────────────────────────────────────────
 
 export class BreakoutScene extends BaseMiniGameScene {
+  constructor() { super({ key: SCENE_KEYS.BREAKOUT }) }
+
   // Graphics
   private gfx!: Phaser.GameObjects.Graphics
 

@@ -41,6 +41,8 @@ type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
 
 // ─── Scene ───────────────────────────────────────────────────────────────────
 export class SnakeScene extends BaseMiniGameScene {
+  constructor() { super({ key: SCENE_KEYS.SNAKE }) }
+
   // Graphics
   private gfx!: Phaser.GameObjects.Graphics
 
