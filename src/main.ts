@@ -10,6 +10,7 @@ import { MemoryScene } from '@games/Memory/MemoryScene'
 import { BreakoutScene } from '@games/Breakout/BreakoutScene'
 import { FlappyScene } from '@games/Flappy/FlappyScene'
 import { MeteorDodgeScene } from '@games/MeteorDodge/MeteorDodgeScene'
+import { WhackMoleScene } from '@games/WhackMole/WhackMoleScene'
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -17,7 +18,7 @@ const config: Phaser.Types.Core.GameConfig = {
   height: GAME_CONFIG.HEIGHT,
   backgroundColor: GAME_CONFIG.BG_COLOR,
   parent: 'game-container',
-  scene: [BootScene, PreloadScene, MainMenuScene, GameManagerScene, SnakeScene, PongScene, MemoryScene, BreakoutScene, FlappyScene, MeteorDodgeScene],
+  scene: [BootScene, PreloadScene, MainMenuScene, GameManagerScene, SnakeScene, PongScene, MemoryScene, BreakoutScene, FlappyScene, MeteorDodgeScene, WhackMoleScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
