@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { SCENE_KEYS, EVENTS } from '@design/constants'
 import type { IMiniGame, MiniGameResult } from '@games/IMiniGame'
+import { EventBus } from '@utils/EventBus'
 
 /**
  * GameManagerScene — orquestra a sequência de mini jogos.
@@ -28,13 +29,18 @@ export class GameManagerScene extends Phaser.Scene {
     this.currentIndex = 0
     this.score = 0
 
-    this.events.on(EVENTS.MINI_GAME_COMPLETE, (result: MiniGameResult) => {
+    EventBus.on(EVENTS.MINI_GAME_COMPLETE, (result: MiniGameResult) => {
       this.score += result.points
       this.nextGame()
     })
 
-    this.events.on(EVENTS.MINI_GAME_FAIL, () => {
+    EventBus.on(EVENTS.MINI_GAME_FAIL, () => {
       this.nextGame()
+    })
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      EventBus.off(EVENTS.MINI_GAME_COMPLETE)
+      EventBus.off(EVENTS.MINI_GAME_FAIL)
     })
 
     this.nextGame()

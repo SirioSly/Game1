@@ -11,8 +11,12 @@ export const SCENE_KEYS = {
   PRELOAD:      'PreloadScene',
   MAIN_MENU:    'MainMenuScene',
   GAME_MANAGER: 'GameManagerScene',
-  // Mini jogos — registrados pelos Agentes 1 e 3
-  // Exemplo: MINI_PUZZLE: 'MiniPuzzleScene',
+  // Mini jogos
+  SNAKE:    'SnakeScene',
+  PONG:     'PongScene',
+  MEMORY:   'MemoryScene',
+  BREAKOUT: 'BreakoutScene',
+  FLAPPY:   'FlappyScene',
 } as const
 
 export const EVENTS = {

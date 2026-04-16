@@ -36,6 +36,7 @@ export interface MiniGameResult {
  */
 import Phaser from 'phaser'
 import { EVENTS } from '@design/constants'
+import { EventBus } from '@utils/EventBus'
 
 export abstract class BaseMiniGameScene extends Phaser.Scene {
   protected elapsedMs = 0
@@ -74,7 +75,7 @@ export abstract class BaseMiniGameScene extends Phaser.Scene {
 
   protected completeSuccess(points: number): void {
     this.timer?.remove()
-    this.events.emit(EVENTS.MINI_GAME_COMPLETE, {
+    EventBus.emit(EVENTS.MINI_GAME_COMPLETE, {
       points,
       elapsedMs: this.elapsedMs,
       success: true,
@@ -83,6 +84,6 @@ export abstract class BaseMiniGameScene extends Phaser.Scene {
 
   protected completeFail(): void {
     this.timer?.remove()
-    this.events.emit(EVENTS.MINI_GAME_FAIL)
+    EventBus.emit(EVENTS.MINI_GAME_FAIL)
   }
 }
