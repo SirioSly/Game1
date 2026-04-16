@@ -16,7 +16,8 @@ export const SCENE_KEYS = {
   PONG:     'PongScene',
   MEMORY:   'MemoryScene',
   BREAKOUT: 'BreakoutScene',
-  FLAPPY:   'FlappyScene',
+  FLAPPY:        'FlappyScene',
+  METEOR_DODGE:  'MeteorDodgeScene',
 } as const
 
 export const EVENTS = {
