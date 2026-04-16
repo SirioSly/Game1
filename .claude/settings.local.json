@@ -1,7 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir \"D:\\\\Projetos CLAUDE\\\\Game1\")"
+      "Bash(git:*)",
+      "Bash(dir \"D:\\\\Projetos CLAUDE\\\\Game1\")",
+      "Bash(git -C \"D:/Projetos CLAUDE/Game1\" status)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:\\Windows\\System32\\cmd.exe /c \"cd /d \\\"D:\\Projetos CLAUDE\\Game1\\\" && git add -A && git diff --cached --quiet || git commit -m \\\"chore: auto-commit\\\" && git push origin main\"",
+            "statusMessage": "Auto-commit e push..."
+          }
+        ]
+      }
     ]
   }
 }

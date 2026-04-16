@@ -5,11 +5,12 @@ import { TextStyles } from '@design/typography'
 import { UIButton } from '@ui/UIButton'
 
 const GAMES: { label: string; key: string }[] = [
-  { label: 'Snake',   key: SCENE_KEYS.SNAKE },
-  { label: 'Pong',    key: SCENE_KEYS.PONG },
-  { label: 'Memory',  key: SCENE_KEYS.MEMORY },
-  { label: 'Breakout',key: SCENE_KEYS.BREAKOUT },
-  { label: 'Flappy',  key: SCENE_KEYS.FLAPPY },
+  { label: 'Snake',        key: SCENE_KEYS.SNAKE },
+  { label: 'Pong',         key: SCENE_KEYS.PONG },
+  { label: 'Memory',       key: SCENE_KEYS.MEMORY },
+  { label: 'Breakout',     key: SCENE_KEYS.BREAKOUT },
+  { label: 'Flappy',       key: SCENE_KEYS.FLAPPY },
+  { label: 'Meteor Dodge', key: SCENE_KEYS.METEOR_DODGE },
 ]
 
 export class MainMenuScene extends Phaser.Scene {

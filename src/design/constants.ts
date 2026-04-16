@@ -1,4 +1,6 @@
 // Design System — Game Constants
+// Jogos disponíveis: Snake, Pong, Memory, Breakout, Flappy, MeteorDodge
+// v4 — auto-commit hook test
 
 export const GAME_CONFIG = {
   WIDTH:    800,
@@ -16,8 +18,8 @@ export const SCENE_KEYS = {
   PONG:     'PongScene',
   MEMORY:   'MemoryScene',
   BREAKOUT: 'BreakoutScene',
-  FLAPPY:        'FlappyScene',
-  METEOR_DODGE:  'MeteorDodgeScene',
+  FLAPPY:       'FlappyScene',
+  METEOR_DODGE: 'MeteorDodgeScene',
 } as const
 
 export const EVENTS = {

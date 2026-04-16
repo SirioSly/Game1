@@ -24,3 +24,6 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+
+# Claude Code worktrees (git repos internos)
+.claude/worktrees/
