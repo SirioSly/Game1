@@ -217,6 +217,14 @@ export class PongScene extends BaseMiniGameScene {
   // ── Per-frame updates ──────────────────────────────────────────────────────
 
   private handlePlayerInput(dt: number): void {
+    const pointer = this.input.activePointer
+
+    // Touch: follow finger on left half of screen
+    if (pointer.isDown && pointer.x < W / 2) {
+      this.player.y = Phaser.Math.Clamp(pointer.y, PADDLE_H / 2, H - PADDLE_H / 2)
+      return
+    }
+
     const up   = this.keyW.isDown    || this.keyUp.isDown
     const down = this.keyS.isDown    || this.keyDown.isDown
 

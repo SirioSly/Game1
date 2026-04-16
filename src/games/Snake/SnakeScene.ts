@@ -126,11 +126,11 @@ export class SnakeScene extends BaseMiniGameScene {
     this.hintTxt = this.add.text(
       GAME_CONFIG.WIDTH / 2,
       GRID_Y + GRID_H + 22,
-      'WASD / Setas para mover',
+      'WASD / Setas  •  Swipe no celular',
       { ...TextStyles.CAPTION, fontSize: '14px' },
     ).setOrigin(0.5, 0.5)
 
-    // Controls
+    // Controls — keyboard
     const keys = this.input.keyboard!
 
     keys.on('keydown-W',    () => this.trySetDir('UP'))
@@ -141,6 +141,26 @@ export class SnakeScene extends BaseMiniGameScene {
     keys.on('keydown-DOWN', () => this.trySetDir('DOWN'))
     keys.on('keydown-LEFT', () => this.trySetDir('LEFT'))
     keys.on('keydown-RIGHT',() => this.trySetDir('RIGHT'))
+
+    // Controls — swipe (mobile)
+    let swipeStartX = 0
+    let swipeStartY = 0
+    const MIN_SWIPE = 30
+
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      swipeStartX = p.x
+      swipeStartY = p.y
+    })
+    this.input.on('pointerup', (p: Phaser.Input.Pointer) => {
+      const dx = p.x - swipeStartX
+      const dy = p.y - swipeStartY
+      if (Math.abs(dx) < MIN_SWIPE && Math.abs(dy) < MIN_SWIPE) return
+      if (Math.abs(dx) > Math.abs(dy)) {
+        this.trySetDir(dx > 0 ? 'RIGHT' : 'LEFT')
+      } else {
+        this.trySetDir(dy > 0 ? 'DOWN' : 'UP')
+      }
+    })
 
     this.drawFrame()
   }

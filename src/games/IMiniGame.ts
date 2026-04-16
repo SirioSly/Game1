@@ -55,6 +55,21 @@ export abstract class BaseMiniGameScene extends Phaser.Scene {
     }
 
     this.onStart()
+    this.addBackButton()
+  }
+
+  private addBackButton(): void {
+    const btn = this.add.text(14, 14, '← Menu', {
+      fontSize: '15px',
+      color: '#a0a0b8',
+      backgroundColor: '#1c1c28cc',
+      padding: { x: 10, y: 6 },
+    })
+    btn.setDepth(1000)
+    btn.setInteractive({ useHandCursor: true })
+    btn.on('pointerover',  () => btn.setStyle({ color: '#ffffff' }))
+    btn.on('pointerout',   () => btn.setStyle({ color: '#a0a0b8' }))
+    btn.on('pointerdown',  () => this.scene.start(SCENE_KEYS.MAIN_MENU))
   }
 
   update(time: number, delta: number): void {
