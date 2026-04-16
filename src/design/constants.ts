@@ -20,6 +20,7 @@ export const SCENE_KEYS = {
   BREAKOUT: 'BreakoutScene',
   FLAPPY:       'FlappyScene',
   METEOR_DODGE: 'MeteorDodgeScene',
+  WHACK_MOLE:   'WhackMoleScene',
 } as const
 
 export const EVENTS = {
