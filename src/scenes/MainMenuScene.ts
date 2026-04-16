@@ -1,8 +1,8 @@
 import Phaser from 'phaser'
 import { SCENE_KEYS, GAME_CONFIG } from '@design/constants'
 import { Colors } from '@design/colors'
-import { TextStyles, FontFamily } from '@design/typography'
-import { Spacing, BorderRadius } from '@design/spacing'
+import { FontFamily } from '@design/typography'
+import { BorderRadius } from '@design/spacing'
 
 // ─── Game catalogue ───────────────────────────────────────────────────────────
 const GAMES: { label: string; key: string; emoji: string; genre: string }[] = [
@@ -20,343 +20,248 @@ const GENRE_COLOR: Record<string, number> = {
   puzzle: Colors.BRAND_ACCENT.num,
   casual: Colors.BRAND_SECONDARY.num,
 }
-
 const GENRE_HEX: Record<string, string> = {
   arcade: Colors.BRAND_PRIMARY.hex,
   puzzle: Colors.BRAND_ACCENT.hex,
   casual: Colors.BRAND_SECONDARY.hex,
 }
 
-// ─── Layout ───────────────────────────────────────────────────────────────────
 const W = GAME_CONFIG.WIDTH
 const H = GAME_CONFIG.HEIGHT
 
-const CARD_W    = 200
-const CARD_H    = 110
+const CARD_W    = 168
+const CARD_H    = 108
 const CARD_COLS = 4
-const CARD_GAP  = 16
+const CARD_GAP  = 14
 const GRID_W    = CARD_COLS * CARD_W + (CARD_COLS - 1) * CARD_GAP
-const GRID_X    = (W - GRID_W) / 2 + CARD_W / 2
-const GRID_Y    = 290
+const GRID_X    = (W - GRID_W) / 2
+const GRID_Y    = 200
 
 export class MainMenuScene extends Phaser.Scene {
-  private stars:    Phaser.GameObjects.Graphics[] = []
-  private particles: { x: number; y: number; vy: number; alpha: number; r: number; color: number }[] = []
-  private bgGfx!:  Phaser.GameObjects.Graphics
-  private t        = 0
-
   constructor() { super({ key: SCENE_KEYS.MAIN_MENU }) }
 
   create(): void {
-    this.stars    = []
-    this.particles = []
-    this.t        = 0
-
-    this.bgGfx = this.add.graphics()
     this.drawBackground()
-    this.spawnStars()
     this.drawTitle()
     this.drawCards()
     this.drawFooter()
   }
 
-  update(_time: number, delta: number): void {
-    this.t += delta
-    this.animateBackground()
-    this.animateParticles(delta)
-  }
-
-  // ── Background ────────────────────────────────────────────────────────────────
-
+  // ── Background (static — drawn once) ─────────────────────────────────────────
   private drawBackground(): void {
-    const g = this.bgGfx
-    g.clear()
+    const g = this.add.graphics()
 
-    // Base deep dark
+    // Base
     g.fillStyle(Colors.BG_PRIMARY.num, 1)
     g.fillRect(0, 0, W, H)
 
-    // Radial glow top-center (brand purple)
-    const steps = 18
-    for (let i = steps; i >= 0; i--) {
-      const alpha = 0.045 * (1 - i / steps)
-      const r     = 340 * (i / steps)
-      g.fillStyle(Colors.BRAND_PRIMARY.num, alpha)
-      g.fillCircle(W / 2, 0, r)
+    // Top center glow — single soft circle, drawn once
+    for (let i = 10; i >= 0; i--) {
+      g.fillStyle(Colors.BRAND_PRIMARY.num, 0.025 * (1 - i / 10))
+      g.fillCircle(W / 2, -20, 420 * (i / 10))
     }
 
-    // Radial glow bottom-right (pink accent)
-    for (let i = steps; i >= 0; i--) {
-      const alpha = 0.03 * (1 - i / steps)
-      const r     = 280 * (i / steps)
-      g.fillStyle(Colors.BRAND_SECONDARY.num, alpha)
-      g.fillCircle(W, H, r)
+    // Bottom right accent
+    for (let i = 8; i >= 0; i--) {
+      g.fillStyle(Colors.BRAND_SECONDARY.num, 0.02 * (1 - i / 8))
+      g.fillCircle(W + 40, H + 40, 300 * (i / 8))
     }
 
-    // Subtle grid
-    g.lineStyle(1, Colors.BG_CARD.num, 0.35)
-    for (let x = 0; x < W; x += 40) {
-      g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.strokePath()
-    }
-    for (let y = 0; y < H; y += 40) {
-      g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.strokePath()
-    }
-  }
-
-  private animateBackground(): void {
-    // Pulse the top glow
-    const pulse = 0.5 + 0.5 * Math.sin(this.t / 2200)
-    const g = this.bgGfx
-
-    // Only redraw glow layers (don't clear full bg every frame — cheap approach:
-    // use a separate overlay graphics instead)
-    // For simplicity, redraw everything at low cost
-    if (Math.floor(this.t / 80) % 2 === 0) {
-      g.clear()
-      g.fillStyle(Colors.BG_PRIMARY.num, 1)
-      g.fillRect(0, 0, W, H)
-
-      const steps = 14
-      for (let i = steps; i >= 0; i--) {
-        const alpha = (0.04 + pulse * 0.02) * (1 - i / steps)
-        const r     = (320 + pulse * 40) * (i / steps)
-        g.fillStyle(Colors.BRAND_PRIMARY.num, alpha)
-        g.fillCircle(W / 2, 0, r)
-      }
-      for (let i = steps; i >= 0; i--) {
-        const alpha = 0.025 * (1 - i / steps)
-        const r     = 240 * (i / steps)
-        g.fillStyle(Colors.BRAND_SECONDARY.num, alpha)
-        g.fillCircle(W, H, r)
-      }
-
-      g.lineStyle(1, Colors.BG_CARD.num, 0.3)
-      for (let x = 0; x < W; x += 40) {
-        g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.strokePath()
-      }
-      for (let y = 0; y < H; y += 40) {
-        g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.strokePath()
-      }
-    }
-  }
-
-  // ── Stars ─────────────────────────────────────────────────────────────────────
-
-  private spawnStars(): void {
-    const count = 55
-    for (let i = 0; i < count; i++) {
-      const g = this.add.graphics()
+    // Stars — static dots, no animation
+    for (let i = 0; i < 60; i++) {
       const x = Phaser.Math.Between(0, W)
       const y = Phaser.Math.Between(0, H)
-      const r = Math.random() < 0.2 ? 2 : 1
-      const alpha = 0.3 + Math.random() * 0.7
-      g.fillStyle(0xffffff, alpha)
+      const r = Math.random() < 0.15 ? 1.5 : 0.8
+      g.fillStyle(0xffffff, 0.15 + Math.random() * 0.45)
       g.fillCircle(x, y, r)
-      this.stars.push(g)
-      // Twinkle
-      this.tweens.add({
-        targets:  g,
-        alpha:    { from: alpha, to: 0.1 },
-        duration: 800 + Math.random() * 2000,
-        yoyo:     true,
-        repeat:   -1,
-        delay:    Math.random() * 2000,
-      })
-
-      // Occasional floating particles
-      if (i % 8 === 0) {
-        this.particles.push({
-          x: Phaser.Math.Between(20, W - 20),
-          y: Phaser.Math.Between(20, H - 20),
-          vy: -(0.3 + Math.random() * 0.6),
-          alpha: 0.4 + Math.random() * 0.4,
-          r: 1.5 + Math.random() * 1.5,
-          color: [Colors.BRAND_PRIMARY.num, Colors.BRAND_ACCENT.num, Colors.BRAND_SECONDARY.num][
-            Math.floor(Math.random() * 3)
-          ],
-        })
-      }
-    }
-  }
-
-  private animateParticles(delta: number): void {
-    for (const p of this.particles) {
-      p.y += p.vy * (delta / 16)
-      if (p.y < -10) p.y = H + 10
     }
   }
 
   // ── Title ─────────────────────────────────────────────────────────────────────
-
   private drawTitle(): void {
     const cx = W / 2
 
-    // Glow behind title
-    const glow = this.add.graphics()
-    glow.fillStyle(Colors.BRAND_PRIMARY.num, 0.18)
-    glow.fillEllipse(cx, 72, 340, 90)
-
-    // Main title
-    const title = this.add.text(cx, 62, 'SIRIO', {
+    // Title
+    const title = this.add.text(cx, 68, 'SIRIO', {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '68px',
+      fontSize:   '62px',
       fontStyle:  'bold',
-      color:      Colors.TEXT_PRIMARY.hex,
+      color:      '#ffffff',
       stroke:     Colors.BRAND_PRIMARY.hex,
-      strokeThickness: 3,
+      strokeThickness: 4,
     }).setOrigin(0.5)
 
-    // Subtle pulse on title
+    // Gentle float tween — just Y, no redraw
     this.tweens.add({
       targets:  title,
-      scaleX:   1.03,
-      scaleY:   1.03,
-      duration: 1800,
+      y:        72,
+      duration: 2000,
       yoyo:     true,
       repeat:   -1,
       ease:     'Sine.easeInOut',
     })
 
     // Subtitle
-    this.add.text(cx, 112, 'Mini Games Collection', {
+    this.add.text(cx, 116, 'MINI GAMES COLLECTION', {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '16px',
+      fontSize:   '13px',
       color:      Colors.TEXT_SECONDARY.hex,
-      letterSpacing: 4,
+      letterSpacing: 5,
     }).setOrigin(0.5)
 
-    // Divider line
+    // Divider
     const div = this.add.graphics()
-    div.lineStyle(1, Colors.BRAND_PRIMARY.num, 0.5)
+    div.lineStyle(1, Colors.BRAND_PRIMARY.num, 0.4)
     div.beginPath()
-    div.moveTo(cx - 160, 135)
-    div.lineTo(cx + 160, 135)
+    div.moveTo(cx - 140, 140); div.lineTo(cx + 140, 140)
     div.strokePath()
+    div.fillStyle(Colors.BRAND_PRIMARY.num, 0.7)
+    div.fillCircle(cx - 140, 140, 2.5)
+    div.fillCircle(cx + 140, 140, 2.5)
+    div.fillCircle(cx, 140, 2.5)
 
-    // Dot on each end of divider
-    div.fillStyle(Colors.BRAND_PRIMARY.num, 0.8)
-    div.fillCircle(cx - 160, 135, 3)
-    div.fillCircle(cx + 160, 135, 3)
+    // Badge
+    const bw = 116, bh = 24, bx = cx - bw / 2, by = 152
+    const badge = this.add.graphics()
+    badge.fillStyle(Colors.BG_CARD.num, 1)
+    badge.lineStyle(1, Colors.BORDER.num, 1)
+    badge.fillRoundedRect(bx, by, bw, bh, BorderRadius.PILL)
+    badge.strokeRoundedRect(bx, by, bw, bh, BorderRadius.PILL)
 
-    // Game count badge
-    const badgeG = this.add.graphics()
-    badgeG.fillStyle(Colors.BG_CARD.num, 1)
-    badgeG.lineStyle(1, Colors.BORDER.num, 1)
-    badgeG.fillRoundedRect(cx - 52, 146, 104, 26, BorderRadius.PILL)
-    badgeG.strokeRoundedRect(cx - 52, 146, 104, 26, BorderRadius.PILL)
-
-    this.add.text(cx, 159, `${GAMES.length} jogos disponíveis`, {
+    this.add.text(cx, by + bh / 2, `${GAMES.length} jogos disponíveis`, {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '12px',
+      fontSize:   '11px',
       color:      Colors.TEXT_SECONDARY.hex,
     }).setOrigin(0.5)
   }
 
   // ── Cards ─────────────────────────────────────────────────────────────────────
-
   private drawCards(): void {
-    GAMES.forEach((game, i) => {
-      const col = i % CARD_COLS
-      const row = Math.floor(i / CARD_COLS)
-      const x   = GRID_X + col * (CARD_W + CARD_GAP) - CARD_W / 2
-      const y   = GRID_Y + row * (CARD_H + CARD_GAP)
-      this.createCard(x, y, game)
+    const row1 = GAMES.slice(0, 4)
+    const row2 = GAMES.slice(4)
+
+    // Row 1 — 4 cards
+    row1.forEach((game, i) => {
+      const x = GRID_X + i * (CARD_W + CARD_GAP)
+      this.createCard(x, GRID_Y, game, i * 60)
+    })
+
+    // Row 2 — remaining cards, centered
+    const row2W = row2.length * CARD_W + (row2.length - 1) * CARD_GAP
+    const row2X = (W - row2W) / 2
+    row2.forEach((game, i) => {
+      const x = row2X + i * (CARD_W + CARD_GAP)
+      this.createCard(x, GRID_Y + CARD_H + CARD_GAP, game, 240 + i * 60)
     })
   }
 
   private createCard(
     x: number, y: number,
     game: { label: string; key: string; emoji: string; genre: string },
+    delay: number,
   ): void {
-    const accentColor = GENRE_COLOR[game.genre] ?? Colors.BRAND_PRIMARY.num
-    const accentHex   = GENRE_HEX[game.genre]   ?? Colors.BRAND_PRIMARY.hex
+    const accent = GENRE_COLOR[game.genre] ?? Colors.BRAND_PRIMARY.num
+    const accentHex = GENRE_HEX[game.genre] ?? Colors.BRAND_PRIMARY.hex
 
-    // Card bg
+    const container = this.add.container(x + CARD_W / 2, y + CARD_H / 2)
+    container.setAlpha(0)
+
+    // Card bg graphic
     const bg = this.add.graphics()
-    const drawNormal = (): void => {
-      bg.clear()
-      bg.fillStyle(Colors.BG_CARD.num, 1)
-      bg.fillRoundedRect(x, y - CARD_H / 2, CARD_W, CARD_H, BorderRadius.LG)
-      bg.lineStyle(1, Colors.BORDER.num, 1)
-      bg.strokeRoundedRect(x, y - CARD_H / 2, CARD_W, CARD_H, BorderRadius.LG)
-      // Top accent bar
-      bg.fillStyle(accentColor, 0.7)
-      bg.fillRoundedRect(x, y - CARD_H / 2, CARD_W, 4, { tl: BorderRadius.LG, tr: BorderRadius.LG, bl: 0, br: 0 })
-    }
-    const drawHover = (): void => {
-      bg.clear()
-      bg.fillStyle(Colors.BG_CARD.num, 1)
-      bg.fillRoundedRect(x - 2, y - CARD_H / 2 - 2, CARD_W + 4, CARD_H + 4, BorderRadius.LG)
-      bg.lineStyle(2, accentColor, 1)
-      bg.strokeRoundedRect(x - 2, y - CARD_H / 2 - 2, CARD_W + 4, CARD_H + 4, BorderRadius.LG)
-      // Glow
-      bg.fillStyle(accentColor, 0.08)
-      bg.fillRoundedRect(x - 2, y - CARD_H / 2 - 2, CARD_W + 4, CARD_H + 4, BorderRadius.LG)
-      // Top accent bar
-      bg.fillStyle(accentColor, 1)
-      bg.fillRoundedRect(x - 2, y - CARD_H / 2 - 2, CARD_W + 4, 4, { tl: BorderRadius.LG, tr: BorderRadius.LG, bl: 0, br: 0 })
-    }
-    drawNormal()
+    this.drawCardNormal(bg, accent)
 
     // Emoji
-    this.add.text(x + CARD_W / 2, y - CARD_H / 2 + 28, game.emoji, {
-      fontSize: '28px',
+    const emoji = this.add.text(0, -22, game.emoji, {
+      fontSize: '26px',
     }).setOrigin(0.5)
 
-    // Game name
-    this.add.text(x + CARD_W / 2, y - CARD_H / 2 + 62, game.label, {
+    // Label
+    const label = this.add.text(0, 14, game.label, {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '15px',
+      fontSize:   '14px',
       fontStyle:  'bold',
-      color:      Colors.TEXT_PRIMARY.hex,
+      color:      '#ffffff',
     }).setOrigin(0.5)
 
-    // Genre badge
-    const badgeW = 68
-    const badgeH = 18
-    const badgeX = x + CARD_W / 2 - badgeW / 2
-    const badgeY = y - CARD_H / 2 + 79
-    const badgeBg = this.add.graphics()
-    badgeBg.fillStyle(accentColor, 0.15)
-    badgeBg.fillRoundedRect(badgeX, badgeY, badgeW, badgeH, BorderRadius.PILL)
+    // Genre pill
+    const pillW = 62, pillH = 16
+    const pill = this.add.graphics()
+    pill.fillStyle(accent, 0.18)
+    pill.fillRoundedRect(-pillW / 2, 28, pillW, pillH, BorderRadius.PILL)
 
-    this.add.text(x + CARD_W / 2, badgeY + badgeH / 2, game.genre, {
+    const genreText = this.add.text(0, 36, game.genre, {
       fontFamily: FontFamily.PRIMARY,
       fontSize:   '10px',
       color:      accentHex,
       letterSpacing: 1,
     }).setOrigin(0.5)
 
-    // Hit area
-    const zone = this.add.zone(x + CARD_W / 2, y, CARD_W, CARD_H)
-      .setInteractive({ useHandCursor: true })
+    container.add([bg, emoji, label, pill, genreText])
+
+    // Hit zone
+    const zone = this.add.zone(0, 0, CARD_W, CARD_H).setInteractive({ useHandCursor: true })
+    container.add(zone)
 
     zone.on('pointerover', () => {
-      drawHover()
-      this.tweens.add({ targets: zone, scaleX: 1, scaleY: 1, duration: 80 })
+      bg.clear()
+      this.drawCardHover(bg, accent)
+      this.tweens.add({ targets: container, scaleX: 1.04, scaleY: 1.04, duration: 100, ease: 'Power2' })
     })
     zone.on('pointerout', () => {
-      drawNormal()
+      bg.clear()
+      this.drawCardNormal(bg, accent)
+      this.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 100, ease: 'Power2' })
     })
     zone.on('pointerdown', () => {
       this.tweens.add({
-        targets:  bg,
-        alpha:    0.6,
-        duration: 80,
-        yoyo:     true,
+        targets: container, scaleX: 0.96, scaleY: 0.96, duration: 80, yoyo: true,
         onComplete: () => this.scene.start(game.key),
       })
     })
+
+    // Entrance animation
+    this.tweens.add({
+      targets:  container,
+      alpha:    1,
+      y:        container.y,
+      duration: 300,
+      delay,
+      ease:     'Power2',
+    })
+    container.y += 20  // start slightly lower
+  }
+
+  private drawCardNormal(g: Phaser.GameObjects.Graphics, accent: number): void {
+    const hw = CARD_W / 2, hh = CARD_H / 2
+    g.fillStyle(Colors.BG_CARD.num, 1)
+    g.fillRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
+    g.lineStyle(1, Colors.BORDER.num, 1)
+    g.strokeRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
+    // Top accent strip
+    g.fillStyle(accent, 0.9)
+    g.fillRoundedRect(-hw, -hh, CARD_W, 4, { tl: BorderRadius.LG, tr: BorderRadius.LG, bl: 0, br: 0 })
+  }
+
+  private drawCardHover(g: Phaser.GameObjects.Graphics, accent: number): void {
+    const hw = CARD_W / 2, hh = CARD_H / 2
+    // Glow layer
+    g.fillStyle(accent, 0.08)
+    g.fillRoundedRect(-hw - 2, -hh - 2, CARD_W + 4, CARD_H + 4, BorderRadius.LG + 2)
+    // Card
+    g.fillStyle(Colors.BG_CARD.num, 1)
+    g.fillRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
+    g.lineStyle(2, accent, 1)
+    g.strokeRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
+    // Top accent strip
+    g.fillStyle(accent, 1)
+    g.fillRoundedRect(-hw, -hh, CARD_W, 4, { tl: BorderRadius.LG, tr: BorderRadius.LG, bl: 0, br: 0 })
   }
 
   // ── Footer ────────────────────────────────────────────────────────────────────
-
   private drawFooter(): void {
-    const y = H - Spacing.LG
-
-    this.add.text(W / 2, y, 'Phaser 3  ·  TypeScript  ·  Vite', {
+    this.add.text(W / 2, H - 18, 'Phaser 3  ·  TypeScript  ·  Vite', {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '11px',
+      fontSize:   '10px',
       color:      Colors.TEXT_MUTED.hex,
       letterSpacing: 2,
     }).setOrigin(0.5)
