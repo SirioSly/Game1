@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta Tags -->
+    <title>Game1 — Jogue Agora no Navegador</title>
+    <meta name="title" content="Game1 — Jogue Agora no Navegador" />
+    <meta name="description" content="Game1 é um jogo de navegador com mini games desafiadores. Sem download, sem instalação — jogue direto pelo browser." />
+    <meta name="keywords" content="game1, jogo, mini games, jogo no navegador, browser game, jogar online" />
+    <meta name="author" content="SirioSly" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0a0a0f" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Game1 — Jogue Agora no Navegador" />
+    <meta property="og:description" content="Game1 é um jogo de navegador com mini games desafiadores. Sem download, sem instalação — jogue direto pelo browser." />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Game1 — Jogue Agora no Navegador" />
+    <meta name="twitter:description" content="Game1 é um jogo de navegador com mini games desafiadores. Sem download, sem instalação — jogue direto pelo browser." />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoGame",
+      "name": "Game1",
+      "description": "Jogo de navegador com mini games desafiadores.",
+      "genre": ["Casual", "Mini Games"],
+      "playMode": "SinglePlayer",
+      "applicationCategory": "Game",
+      "operatingSystem": "Web Browser",
+      "inLanguage": "pt-BR",
+      "author": {
+        "@type": "Person",
+        "name": "SirioSly"
+      }
+    }
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #0a0a0f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

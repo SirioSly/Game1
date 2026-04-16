@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@design/*": ["src/design/*"],
+      "@scenes/*": ["src/scenes/*"],
+      "@games/*": ["src/games/*"],
+      "@ui/*": ["src/ui/*"],
+      "@utils/*": ["src/utils/*"],
+      "@updaters/*": ["src/updaters/*"]
+    }
+  },
+  "include": ["src"]
+}
