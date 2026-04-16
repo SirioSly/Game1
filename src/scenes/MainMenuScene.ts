@@ -2,268 +2,119 @@ import Phaser from 'phaser'
 import { SCENE_KEYS, GAME_CONFIG } from '@design/constants'
 import { Colors } from '@design/colors'
 import { FontFamily } from '@design/typography'
-import { BorderRadius } from '@design/spacing'
 
-// ─── Game catalogue ───────────────────────────────────────────────────────────
-const GAMES: { label: string; key: string; emoji: string; genre: string }[] = [
-  { label: 'Snake',        key: SCENE_KEYS.SNAKE,        emoji: '🐍', genre: 'arcade'  },
-  { label: 'Pong',         key: SCENE_KEYS.PONG,         emoji: '🏓', genre: 'arcade'  },
-  { label: 'Memory',       key: SCENE_KEYS.MEMORY,       emoji: '🧠', genre: 'puzzle'  },
-  { label: 'Breakout',     key: SCENE_KEYS.BREAKOUT,     emoji: '🧱', genre: 'arcade'  },
-  { label: 'Flappy',       key: SCENE_KEYS.FLAPPY,       emoji: '🐦', genre: 'casual'  },
-  { label: 'Meteor Dodge', key: SCENE_KEYS.METEOR_DODGE, emoji: '🚀', genre: 'arcade'  },
-  { label: 'Whack-a-Mole', key: SCENE_KEYS.WHACK_MOLE,  emoji: '🐭', genre: 'casual'  },
+const GAMES = [
+  { label: 'Snake',        key: SCENE_KEYS.SNAKE,        emoji: '🐍', color: 0x6c63ff },
+  { label: 'Pong',         key: SCENE_KEYS.PONG,         emoji: '🏓', color: 0x6c63ff },
+  { label: 'Memory',       key: SCENE_KEYS.MEMORY,       emoji: '🧠', color: 0x43e97b },
+  { label: 'Breakout',     key: SCENE_KEYS.BREAKOUT,     emoji: '🧱', color: 0x6c63ff },
+  { label: 'Flappy',       key: SCENE_KEYS.FLAPPY,       emoji: '🐦', color: 0xff6584 },
+  { label: 'Meteor Dodge', key: SCENE_KEYS.METEOR_DODGE, emoji: '🚀', color: 0x6c63ff },
+  { label: 'Whack-a-Mole', key: SCENE_KEYS.WHACK_MOLE,  emoji: '🐭', color: 0xff6584 },
 ]
-
-const GENRE_COLOR: Record<string, number> = {
-  arcade: Colors.BRAND_PRIMARY.num,
-  puzzle: Colors.BRAND_ACCENT.num,
-  casual: Colors.BRAND_SECONDARY.num,
-}
-const GENRE_HEX: Record<string, string> = {
-  arcade: Colors.BRAND_PRIMARY.hex,
-  puzzle: Colors.BRAND_ACCENT.hex,
-  casual: Colors.BRAND_SECONDARY.hex,
-}
 
 const W = GAME_CONFIG.WIDTH
 const H = GAME_CONFIG.HEIGHT
-
-const CARD_W    = 168
-const CARD_H    = 108
-const CARD_COLS = 4
-const CARD_GAP  = 14
-const GRID_W    = CARD_COLS * CARD_W + (CARD_COLS - 1) * CARD_GAP
-const GRID_X    = (W - GRID_W) / 2
-const GRID_Y    = 200
+const CW = 172   // card width
+const CH = 100   // card height
+const GAP = 12
 
 export class MainMenuScene extends Phaser.Scene {
   constructor() { super({ key: SCENE_KEYS.MAIN_MENU }) }
 
   create(): void {
-    this.drawBackground()
-    this.drawTitle()
-    this.drawCards()
-    this.drawFooter()
-  }
+    // ── Background ────────────────────────────────────────────────────────────
+    this.add.rectangle(0, 0, W, H, 0x0d0d14).setOrigin(0)
 
-  // ── Background (static — drawn once) ─────────────────────────────────────────
-  private drawBackground(): void {
-    const g = this.add.graphics()
+    // Single subtle top glow — drawn once, no animation
+    const glow = this.add.graphics()
+    glow.fillStyle(0x6c63ff, 0.07)
+    glow.fillRect(0, 0, W, 220)
 
-    // Base
-    g.fillStyle(Colors.BG_PRIMARY.num, 1)
-    g.fillRect(0, 0, W, H)
-
-    // Top center glow — single soft circle, drawn once
-    for (let i = 10; i >= 0; i--) {
-      g.fillStyle(Colors.BRAND_PRIMARY.num, 0.025 * (1 - i / 10))
-      g.fillCircle(W / 2, -20, 420 * (i / 10))
-    }
-
-    // Bottom right accent
-    for (let i = 8; i >= 0; i--) {
-      g.fillStyle(Colors.BRAND_SECONDARY.num, 0.02 * (1 - i / 8))
-      g.fillCircle(W + 40, H + 40, 300 * (i / 8))
-    }
-
-    // Stars — static dots, no animation
-    for (let i = 0; i < 60; i++) {
-      const x = Phaser.Math.Between(0, W)
-      const y = Phaser.Math.Between(0, H)
-      const r = Math.random() < 0.15 ? 1.5 : 0.8
-      g.fillStyle(0xffffff, 0.15 + Math.random() * 0.45)
-      g.fillCircle(x, y, r)
-    }
-  }
-
-  // ── Title ─────────────────────────────────────────────────────────────────────
-  private drawTitle(): void {
-    const cx = W / 2
-
-    // Title
-    const title = this.add.text(cx, 68, 'SIRIO', {
+    // ── Title ─────────────────────────────────────────────────────────────────
+    this.add.text(W / 2, 58, 'SIRIO', {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '62px',
+      fontSize:   '58px',
       fontStyle:  'bold',
       color:      '#ffffff',
-      stroke:     Colors.BRAND_PRIMARY.hex,
-      strokeThickness: 4,
+      stroke:     '#6c63ff',
+      strokeThickness: 3,
     }).setOrigin(0.5)
 
-    // Gentle float tween — just Y, no redraw
-    this.tweens.add({
-      targets:  title,
-      y:        72,
-      duration: 2000,
-      yoyo:     true,
-      repeat:   -1,
-      ease:     'Sine.easeInOut',
-    })
-
-    // Subtitle
-    this.add.text(cx, 116, 'MINI GAMES COLLECTION', {
+    this.add.text(W / 2, 106, 'MINI GAMES COLLECTION', {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '13px',
-      color:      Colors.TEXT_SECONDARY.hex,
-      letterSpacing: 5,
+      fontSize:   '12px',
+      color:      '#5a5a7a',
+      letterSpacing: 6,
     }).setOrigin(0.5)
 
-    // Divider
-    const div = this.add.graphics()
-    div.lineStyle(1, Colors.BRAND_PRIMARY.num, 0.4)
-    div.beginPath()
-    div.moveTo(cx - 140, 140); div.lineTo(cx + 140, 140)
-    div.strokePath()
-    div.fillStyle(Colors.BRAND_PRIMARY.num, 0.7)
-    div.fillCircle(cx - 140, 140, 2.5)
-    div.fillCircle(cx + 140, 140, 2.5)
-    div.fillCircle(cx, 140, 2.5)
+    // Thin divider
+    const line = this.add.graphics()
+    line.lineStyle(1, 0x6c63ff, 0.3)
+    line.lineBetween(W / 2 - 120, 128, W / 2 + 120, 128)
 
-    // Badge
-    const bw = 116, bh = 24, bx = cx - bw / 2, by = 152
-    const badge = this.add.graphics()
-    badge.fillStyle(Colors.BG_CARD.num, 1)
-    badge.lineStyle(1, Colors.BORDER.num, 1)
-    badge.fillRoundedRect(bx, by, bw, bh, BorderRadius.PILL)
-    badge.strokeRoundedRect(bx, by, bw, bh, BorderRadius.PILL)
-
-    this.add.text(cx, by + bh / 2, `${GAMES.length} jogos disponíveis`, {
-      fontFamily: FontFamily.PRIMARY,
-      fontSize:   '11px',
-      color:      Colors.TEXT_SECONDARY.hex,
-    }).setOrigin(0.5)
-  }
-
-  // ── Cards ─────────────────────────────────────────────────────────────────────
-  private drawCards(): void {
+    // ── Cards ─────────────────────────────────────────────────────────────────
     const row1 = GAMES.slice(0, 4)
     const row2 = GAMES.slice(4)
 
-    // Row 1 — 4 cards
-    row1.forEach((game, i) => {
-      const x = GRID_X + i * (CARD_W + CARD_GAP)
-      this.createCard(x, GRID_Y, game, i * 60)
-    })
+    const totalW1 = row1.length * CW + (row1.length - 1) * GAP
+    const startX1 = (W - totalW1) / 2
 
-    // Row 2 — remaining cards, centered
-    const row2W = row2.length * CARD_W + (row2.length - 1) * CARD_GAP
-    const row2X = (W - row2W) / 2
-    row2.forEach((game, i) => {
-      const x = row2X + i * (CARD_W + CARD_GAP)
-      this.createCard(x, GRID_Y + CARD_H + CARD_GAP, game, 240 + i * 60)
-    })
+    const totalW2 = row2.length * CW + (row2.length - 1) * GAP
+    const startX2 = (W - totalW2) / 2
+
+    const startY = 160
+
+    row1.forEach((g, i) => this.card(startX1 + i * (CW + GAP), startY, g))
+    row2.forEach((g, i) => this.card(startX2 + i * (CW + GAP), startY + CH + GAP, g))
+
+    // ── Footer ────────────────────────────────────────────────────────────────
+    this.add.text(W / 2, H - 16, 'Phaser 3  ·  TypeScript  ·  Vite', {
+      fontFamily: FontFamily.PRIMARY,
+      fontSize:   '10px',
+      color:      '#2a2a3e',
+      letterSpacing: 3,
+    }).setOrigin(0.5)
   }
 
-  private createCard(
-    x: number, y: number,
-    game: { label: string; key: string; emoji: string; genre: string },
-    delay: number,
-  ): void {
-    const accent = GENRE_COLOR[game.genre] ?? Colors.BRAND_PRIMARY.num
-    const accentHex = GENRE_HEX[game.genre] ?? Colors.BRAND_PRIMARY.hex
+  private card(x: number, y: number, game: typeof GAMES[0]): void {
+    // Normal state (pre-drawn, just toggled)
+    const bgNormal = this.add.graphics()
+    bgNormal.fillStyle(0x1c1c28, 1)
+    bgNormal.fillRoundedRect(x, y, CW, CH, 10)
+    bgNormal.lineStyle(1, 0x2a2a3e, 1)
+    bgNormal.strokeRoundedRect(x, y, CW, CH, 10)
+    bgNormal.fillStyle(game.color, 1)
+    bgNormal.fillRoundedRect(x, y, CW, 3, { tl: 10, tr: 10, bl: 0, br: 0 })
 
-    const container = this.add.container(x + CARD_W / 2, y + CARD_H / 2)
-    container.setAlpha(0)
-
-    // Card bg graphic
-    const bg = this.add.graphics()
-    this.drawCardNormal(bg, accent)
+    // Hover state (pre-drawn, hidden initially)
+    const bgHover = this.add.graphics()
+    bgHover.fillStyle(0x22223a, 1)
+    bgHover.fillRoundedRect(x, y, CW, CH, 10)
+    bgHover.lineStyle(2, game.color, 0.9)
+    bgHover.strokeRoundedRect(x, y, CW, CH, 10)
+    bgHover.fillStyle(game.color, 1)
+    bgHover.fillRoundedRect(x, y, CW, 3, { tl: 10, tr: 10, bl: 0, br: 0 })
+    bgHover.setVisible(false)
 
     // Emoji
-    const emoji = this.add.text(0, -22, game.emoji, {
+    this.add.text(x + CW / 2, y + 30, game.emoji, {
       fontSize: '26px',
     }).setOrigin(0.5)
 
     // Label
-    const label = this.add.text(0, 14, game.label, {
+    this.add.text(x + CW / 2, y + 66, game.label, {
       fontFamily: FontFamily.PRIMARY,
-      fontSize:   '14px',
+      fontSize:   '13px',
       fontStyle:  'bold',
       color:      '#ffffff',
     }).setOrigin(0.5)
 
-    // Genre pill
-    const pillW = 62, pillH = 16
-    const pill = this.add.graphics()
-    pill.fillStyle(accent, 0.18)
-    pill.fillRoundedRect(-pillW / 2, 28, pillW, pillH, BorderRadius.PILL)
-
-    const genreText = this.add.text(0, 36, game.genre, {
-      fontFamily: FontFamily.PRIMARY,
-      fontSize:   '10px',
-      color:      accentHex,
-      letterSpacing: 1,
-    }).setOrigin(0.5)
-
-    container.add([bg, emoji, label, pill, genreText])
-
     // Hit zone
-    const zone = this.add.zone(0, 0, CARD_W, CARD_H).setInteractive({ useHandCursor: true })
-    container.add(zone)
+    const zone = this.add.zone(x, y, CW, CH).setOrigin(0).setInteractive({ useHandCursor: true })
 
-    zone.on('pointerover', () => {
-      bg.clear()
-      this.drawCardHover(bg, accent)
-      this.tweens.add({ targets: container, scaleX: 1.04, scaleY: 1.04, duration: 100, ease: 'Power2' })
-    })
-    zone.on('pointerout', () => {
-      bg.clear()
-      this.drawCardNormal(bg, accent)
-      this.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 100, ease: 'Power2' })
-    })
-    zone.on('pointerdown', () => {
-      this.tweens.add({
-        targets: container, scaleX: 0.96, scaleY: 0.96, duration: 80, yoyo: true,
-        onComplete: () => this.scene.start(game.key),
-      })
-    })
-
-    // Entrance animation
-    this.tweens.add({
-      targets:  container,
-      alpha:    1,
-      y:        container.y,
-      duration: 300,
-      delay,
-      ease:     'Power2',
-    })
-    container.y += 20  // start slightly lower
-  }
-
-  private drawCardNormal(g: Phaser.GameObjects.Graphics, accent: number): void {
-    const hw = CARD_W / 2, hh = CARD_H / 2
-    g.fillStyle(Colors.BG_CARD.num, 1)
-    g.fillRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
-    g.lineStyle(1, Colors.BORDER.num, 1)
-    g.strokeRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
-    // Top accent strip
-    g.fillStyle(accent, 0.9)
-    g.fillRoundedRect(-hw, -hh, CARD_W, 4, { tl: BorderRadius.LG, tr: BorderRadius.LG, bl: 0, br: 0 })
-  }
-
-  private drawCardHover(g: Phaser.GameObjects.Graphics, accent: number): void {
-    const hw = CARD_W / 2, hh = CARD_H / 2
-    // Glow layer
-    g.fillStyle(accent, 0.08)
-    g.fillRoundedRect(-hw - 2, -hh - 2, CARD_W + 4, CARD_H + 4, BorderRadius.LG + 2)
-    // Card
-    g.fillStyle(Colors.BG_CARD.num, 1)
-    g.fillRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
-    g.lineStyle(2, accent, 1)
-    g.strokeRoundedRect(-hw, -hh, CARD_W, CARD_H, BorderRadius.LG)
-    // Top accent strip
-    g.fillStyle(accent, 1)
-    g.fillRoundedRect(-hw, -hh, CARD_W, 4, { tl: BorderRadius.LG, tr: BorderRadius.LG, bl: 0, br: 0 })
-  }
-
-  // ── Footer ────────────────────────────────────────────────────────────────────
-  private drawFooter(): void {
-    this.add.text(W / 2, H - 18, 'Phaser 3  ·  TypeScript  ·  Vite', {
-      fontFamily: FontFamily.PRIMARY,
-      fontSize:   '10px',
-      color:      Colors.TEXT_MUTED.hex,
-      letterSpacing: 2,
-    }).setOrigin(0.5)
+    zone.on('pointerover',  () => { bgNormal.setVisible(false); bgHover.setVisible(true)  })
+    zone.on('pointerout',   () => { bgNormal.setVisible(true);  bgHover.setVisible(false) })
+    zone.on('pointerdown',  () => { this.cameras.main.flash(120, 0, 0, 0); this.scene.start(game.key) })
   }
 }
