@@ -11,6 +11,7 @@ const GAMES: { label: string; key: string }[] = [
   { label: 'Breakout',     key: SCENE_KEYS.BREAKOUT },
   { label: 'Flappy',       key: SCENE_KEYS.FLAPPY },
   { label: 'Meteor Dodge', key: SCENE_KEYS.METEOR_DODGE },
+  { label: 'Whack-a-Mole', key: SCENE_KEYS.WHACK_MOLE },
 ]
 
 export class MainMenuScene extends Phaser.Scene {
