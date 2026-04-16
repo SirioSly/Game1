@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
 export default defineConfig({
-  base: '/Game1/',
+  base: '/',
   resolve: {
     alias: {
       '@design': resolve(__dirname, 'src/design'),
