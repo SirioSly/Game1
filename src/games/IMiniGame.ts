@@ -35,7 +35,7 @@ export interface MiniGameResult {
  * Fornece helpers para emitir eventos de conclusão.
  */
 import Phaser from 'phaser'
-import { EVENTS } from '@design/constants'
+import { EVENTS, SCENE_KEYS } from '@design/constants'
 import { EventBus } from '@utils/EventBus'
 
 export abstract class BaseMiniGameScene extends Phaser.Scene {
@@ -80,10 +80,12 @@ export abstract class BaseMiniGameScene extends Phaser.Scene {
       elapsedMs: this.elapsedMs,
       success: true,
     } satisfies MiniGameResult)
+    this.scene.start(SCENE_KEYS.MAIN_MENU)
   }
 
   protected completeFail(): void {
     this.timer?.remove()
     EventBus.emit(EVENTS.MINI_GAME_FAIL)
+    this.scene.start(SCENE_KEYS.MAIN_MENU)
   }
 }
