@@ -42,6 +42,7 @@ export const ASSET_KEYS = {
 
 export const STORAGE_KEYS = {
   HIGH_SCORE:   'game1:highScore',
+  SCORE_PREFIX: 'game1:score',
   SETTINGS:     'game1:settings',
   PROGRESS:     'game1:progress',
 } as const

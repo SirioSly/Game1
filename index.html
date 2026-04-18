@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <!-- Primary Meta Tags -->
-    <title>Game1 — Jogue Agora no Navegador</title>
-    <meta name="title" content="Game1 — Jogue Agora no Navegador" />
-    <meta name="description" content="Game1 é um jogo de navegador com mini games desafiadores. Sem download, sem instalação — jogue direto pelo browser." />
-    <meta name="keywords" content="game1, jogo, mini games, jogo no navegador, browser game, jogar online" />
+    <title>Sirio Mini Games — Jogue Agora no Navegador</title>
+    <meta name="title" content="Sirio Mini Games — Jogue Agora no Navegador" />
+    <meta name="description" content="7 mini games clássicos direto no browser: Snake, Pong, Memory, Breakout, Flappy, Meteor Dodge e Whack-a-Mole. Sem download, sem instalação." />
+    <meta name="keywords" content="mini games, snake, pong, memory, breakout, flappy, jogo online, browser game, SirioSly" />
     <meta name="author" content="SirioSly" />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#0a0a0f" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Game1 — Jogue Agora no Navegador" />
-    <meta property="og:description" content="Game1 é um jogo de navegador com mini games desafiadores. Sem download, sem instalação — jogue direto pelo browser." />
+    <meta property="og:title" content="Sirio Mini Games — Jogue Agora no Navegador" />
+    <meta property="og:description" content="7 mini games clássicos direto no browser. Sem download, sem instalação." />
     <meta property="og:image" content="/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -24,8 +24,8 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Game1 — Jogue Agora no Navegador" />
-    <meta name="twitter:description" content="Game1 é um jogo de navegador com mini games desafiadores. Sem download, sem instalação — jogue direto pelo browser." />
+    <meta name="twitter:title" content="Sirio Mini Games — Jogue Agora no Navegador" />
+    <meta name="twitter:description" content="7 mini games clássicos direto no browser. Sem download, sem instalação." />
     <meta name="twitter:image" content="/og-image.png" />
 
     <!-- Favicon & Manifest -->
@@ -39,9 +39,9 @@
     {
       "@context": "https://schema.org",
       "@type": "VideoGame",
-      "name": "Game1",
-      "description": "Jogo de navegador com mini games desafiadores.",
-      "genre": ["Casual", "Mini Games"],
+      "name": "Sirio Mini Games",
+      "description": "Coleção de 7 mini games clássicos jogáveis direto no navegador.",
+      "genre": ["Casual", "Mini Games", "Arcade"],
       "playMode": "SinglePlayer",
       "applicationCategory": "Game",
       "operatingSystem": "Web Browser",
@@ -52,12 +52,10 @@
       }
     }
     </script>
+
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
       body {
         background: #0a0a0f;
         display: flex;
@@ -66,14 +64,136 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
+        font-family: system-ui, -apple-system, Arial, sans-serif;
       }
-      canvas {
-        display: block;
+
+      canvas { display: block; }
+
+      /* ── Loading Splash ───────────────────────────────────────────────── */
+      #splash {
+        position: fixed;
+        inset: 0;
+        background: #0a0a0f;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        transition: opacity 0.45s ease;
+        pointer-events: none;
+      }
+      #splash.fade-out { opacity: 0; }
+
+      .splash-glow {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 220px;
+        background: radial-gradient(ellipse 60% 100% at 50% 0%, rgba(108,99,255,0.18) 0%, transparent 100%);
+      }
+
+      .splash-title {
+        font-size: 56px;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 6px;
+        text-shadow: 0 0 28px rgba(108,99,255,0.7), 0 0 60px rgba(108,99,255,0.3);
+        position: relative;
+        z-index: 1;
+      }
+
+      .splash-sub {
+        font-size: 11px;
+        color: #454565;
+        letter-spacing: 8px;
+        margin-top: 10px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .splash-spinner-wrap {
+        margin-top: 48px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .splash-spinner {
+        width: 30px;
+        height: 30px;
+        border: 2px solid rgba(108,99,255,0.15);
+        border-top-color: #6c63ff;
+        border-radius: 50%;
+        animation: spin 0.75s linear infinite;
+      }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* Stars behind splash (CSS-only, lightweight) */
+      .splash-stars {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        z-index: 0;
+      }
+      .splash-stars span {
+        position: absolute;
+        border-radius: 50%;
+        background: #fff;
+        animation: twinkle 3s infinite alternate ease-in-out;
+      }
+      @keyframes twinkle {
+        from { opacity: 0.05; }
+        to   { opacity: 0.45; }
       }
     </style>
   </head>
   <body>
+    <!-- Loading splash visible while the JS bundle initializes -->
+    <div id="splash">
+      <div class="splash-glow"></div>
+      <div class="splash-stars" id="splash-stars"></div>
+      <div class="splash-title">SIRIO</div>
+      <div class="splash-sub">MINI GAMES COLLECTION</div>
+      <div class="splash-spinner-wrap">
+        <div class="splash-spinner"></div>
+      </div>
+    </div>
+
     <div id="game-container"></div>
+
+    <script>
+      // Generate CSS stars for splash
+      (function () {
+        const wrap = document.getElementById('splash-stars')
+        for (let i = 0; i < 28; i++) {
+          const s = document.createElement('span')
+          const sz = Math.random() * 2 + 0.5
+          s.style.cssText = [
+            `width:${sz}px`, `height:${sz}px`,
+            `left:${Math.random() * 100}%`, `top:${Math.random() * 100}%`,
+            `animation-delay:${(Math.random() * 3).toFixed(2)}s`,
+            `animation-duration:${(2 + Math.random() * 3).toFixed(2)}s`,
+          ].join(';')
+          wrap.appendChild(s)
+        }
+      })()
+
+      // Hide splash when Phaser signals it's ready
+      window.addEventListener('game-ready', function () {
+        const s = document.getElementById('splash')
+        if (!s) return
+        s.classList.add('fade-out')
+        setTimeout(() => s.remove(), 460)
+      }, { once: true })
+
+      // Fallback: remove after 6s if event never fires
+      setTimeout(function () {
+        const s = document.getElementById('splash')
+        if (!s) return
+        s.classList.add('fade-out')
+        setTimeout(() => s.remove(), 460)
+      }, 6000)
+    </script>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

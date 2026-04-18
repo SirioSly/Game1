@@ -1,8 +1,8 @@
 // Design System — Typography Tokens
 
 export const FontFamily = {
-  PRIMARY: 'Arial',    // substituir por fonte customizada quando disponível
-  MONO:    'Courier New',
+  PRIMARY: 'system-ui, -apple-system, Arial, sans-serif',
+  MONO:    '"Courier New", Courier, monospace',
 } as const
 
 export const FontSize = {
