@@ -3,7 +3,9 @@
     "allow": [
       "Bash(git:*)",
       "Bash(dir \"D:\\\\Projetos CLAUDE\\\\Game1\")",
-      "Bash(git -C \"D:/Projetos CLAUDE/Game1\" status)"
+      "Bash(git -C \"D:/Projetos CLAUDE/Game1\" status)",
+      "Bash(grep -v \"^D:/Projetos CLAUDE/Game1/src/games$\")",
+      "Bash(dir src/)"
     ]
   },
   "hooks": {
